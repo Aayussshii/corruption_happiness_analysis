@@ -1,0 +1,258 @@
+---
+title: Investigating the Relationship Between Corruption Perception and Happiness
+  Across Countries
+author: 'Aayushi'
+date: "Last updated: `r format(Sys.time(), '%d %B, %Y')`"
+output:
+  slidy_presentation:
+    font_adjustment: -1
+    highlight: haddock
+    mathjax: default
+    df_print: paged
+  ioslides_presentation:
+    highlight: haddock
+  beamer_presentation:
+    highlight: haddock
+subtitle: An Applied Analytics Investigation Using World Happiness Data (2015–2020)
+---
+
+```{r setup, include=FALSE}
+# load required pacakges
+
+knitr::opts_chunk$set(
+  fig.align = "center",
+  message = FALSE,
+  warning = FALSE,
+  echo = FALSE,
+  fig.width = 5,
+  fig.height = 3
+)
+
+# Packages loaded 
+
+library(ggplot2) 
+library(dplyr)  
+library(knitr) 
+
+#load data
+
+data <- read.csv("WorldHappiness_Corruption_2015_2020.csv")
+
+```
+
+
+# Introduction
+
+- Happiness is influenced by social, economic, and political conditions across countries. 
+- Corruption perception may affect public trust, quality of life, and overall wellbeing. 
+- Countries with lower perceived corruption are often associated with stronger institutions and higher living standards. 
+- This investigation analyses the relationship between Corruption Perception Index (CPI) scores and happiness scores using global data collected between 2015 and 2020.
+
+
+
+# Problem Statement
+
+- This investigation aims to examine whether perceived corruption is associated with happiness levels across countries. 
+- The analysis focuses on the relationship between Corruption Perception Index (CPI) scores and happiness scores from 2015 to 2020. 
+- Descriptive statistics and visualisations will be used to identify trends and distribution patterns in the data. 
+- Hypothesis testing and linear regression analysis will be applied to evaluate the statistical relationship between corruption perception and happiness scores
+
+
+
+# Data
+
+- The dataset used in this investigation contains World Happiness and Corruption Perception Index (CPI) data collected between 2015 and 2020. 
+- The data includes 792 observations and 13 variables related to happiness, economic conditions, freedom, government trust, and corruption perception across countries. 
+- The dataset was obtained from Kaggle and combines information from global happiness reports and CPI data sources. 
+- The main variables used in this investigation are: 
+     - `happiness_score`: overall happiness score of a country 
+     - `cpi_score`: Corruption Perception Index score (higher values indicate lower perceived corruption) 
+     - `gdp_per_capita`: economic indicator representing income level 
+     - `continent`: categorical variable identifying geographical region 
+- Only variables relevant to the investigation were selected for analysis.
+
+
+
+# Data Cont.
+
+- Data preprocessing was performed before statistical analysis. 
+- Only variables relevant to the investigation were selected to improve clarity and reduce unnecessary complexity. 
+- Missing values were checked using R functions and handled appropriately during the analysis process. 
+- Numerical variables such as `happiness_score`, `cpi_score`, and `gdp_per_capita` were retained for statistical modelling. 
+- The variable `continent` was used as a categorical grouping variable for comparisons and visualisation. 
+- The dataset was analysed using R statistical software and relevant visualisation packages.
+
+
+
+# Descriptive Statistics and Visualisation
+
+- Descriptive statistics were used to summarise the distribution and variability of the main variables.
+- The variables analysed include `happiness_score`, `cpi_score`, and `gdp_per_capita`. 
+- Measures such as mean, median, standard deviation, minimum, and maximum values were examined. 
+- Visualisations were used to identify patterns, skewness, trends, and possible outliers within the data.
+
+```{r, echo=FALSE}
+table1 <- data.frame(
+  Variable = c("Happiness Score", "CPI Score"),
+  Mean = c(5.47, 44.33),
+  Median = c(5.49, 38.00),
+  SD = c(1.12, 19.51),
+  Min = c(2.57, 11.00),
+  Max = c(7.81, 91.00)
+)
+
+knitr::kable(
+  table1,
+  digits = 2,
+  caption = "Table 1: Summary Statistics"
+)
+```
+
+
+
+# Descriptive Statistics Cont.
+
+- Table 1 shows that the average happiness score across countries was 5.47, with a median of 5.49.
+- The mean and median happiness scores are very similar, suggesting that the distribution of happiness
+scores is approximately symmetric.
+- The average CPI score was 44.33, while the median CPI score was 38.00.
+- The difference between the mean and median CPI scores suggests a degree of positive skewness in the CPI distribution.
+- The standard deviation of happiness scores was 1.12, indicating moderate variability, while the CPI score showed greater variability with a standard deviation of 19.51.
+
+
+
+# Relationship between CPI and Happiness
+
+```{r, echo=FALSE, fig.width=6, fig.height=4}
+ggplot(data, aes(x = cpi_score, y = happiness_score)) +
+  geom_point(color = "steelblue", alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(
+    title = "Figure 1: Relationship Between CPI Score and Happiness Score",
+    x = "CPI Score",
+    y = "Happiness Score"
+  ) +
+  theme_minimal()
+```
+
+
+
+# Scatterplot Interpretation
+
+- Figure 1 shows a positive relationship between CPI scores and happiness scores.
+- Countries with higher CPI scores, meaning lower perceived corruption, generally report higher happiness levels.
+- The upward trend line suggests a positive association between corruption perception and happiness.
+- However, some variation remains around the trend line, indicating that happiness is also influenced by other social and economic factors.
+
+
+
+
+# Distribution of Happiness Scores
+
+```{r, echo=FALSE}
+ggplot(data, aes(x = happiness_score)) +
+  geom_histogram(bins = 20, fill = "skyblue", color = "black") +
+  labs(
+    title = "Figure 2: Distribution of Happiness Scores",
+    x = "Happiness Score",
+    y = "Frequency"
+  ) +
+  theme_minimal()
+```
+
+
+
+# Distribution Interpretation
+
+- Figure 2 displays the distribution of happiness scores across countries.
+- The distribution appears approximately symmetric.
+- The mean happiness score (5.47) and median happiness score (5.49) are very similar, indicating little evidence of strong skewness.
+- The distribution suggests that the data are reasonably suitable for further statistical analysis and modelling.
+
+
+
+
+# Hypothesis Testing
+
+- - A simple linear regression model was fitted to investigate the relationship between CPI score and happiness score:
+
+```{r, echo=FALSE}
+model1 <- lm(happiness_score ~ cpi_score, data = data)
+
+reg_table <- data.frame(
+  Statistic = c("Slope Coefficient", "p-value", "R-squared"),
+  Value = c("0.03995", "<0.001", "0.4803")
+)
+
+knitr::kable(reg_table)
+```
+
+- The following hypotheses were tested:
+
+$$H_0: \beta_1 = 0$$
+
+$$H_A: \beta_1 \neq 0$$
+
+- Where $\beta_1$ represents the slope of the relationship between CPI score and happiness score.
+
+
+
+
+# Hypothesis Testing Cont.
+
+- The regression model found a statistically significant positive relationship between CPI score and happiness score (p < 0.001).
+- Since the p-value is less than the significance level of 0.05, the null hypothesis was rejected.
+- The estimated slope coefficient was 0.03995, indicating that for every one-unit increase in CPI score, the predicted happiness score increases by approximately 0.04 points.
+- The model explained approximately 48.03% of the variation in happiness scores (R² = 0.4803).
+- These findings suggest that countries with lower perceived corruption tend to report higher levels of happiness.
+
+
+
+# Model Diagnostics
+
+```{r, echo=FALSE, fig.width=7, fig.height=5}
+par(mfrow = c(2, 2), mar = c(3, 3, 2, 1))
+plot(model1)
+```
+
+
+
+# Model Diagnostics Cont.
+
+- Diagnostic plots were examined to assess the assumptions of the linear regression model. 
+- The Residuals vs Fitted plot showed a generally random pattern around zero, suggesting that the assumption of linearity was reasonably satisfied.
+- The Normal Q-Q plot indicated that residuals were approximately normally distributed, with only minor deviations observed in the tails.
+- The Scale-Location plot suggested relatively constant variance of residuals across fitted values, indicating no serious heteroscedasticity.
+- The Residuals vs Leverage plot did not identify any highly influential observations that would substantially affect the model results.
+- Overall, the diagnostic plots suggest that the assumptions of linear regression were reasonably satisfied and the model was appropriate for this investigation.
+
+
+
+# Discussion
+
+- The results indicate a positive relationship between CPI score and happiness score across countries.
+- Countries with lower perceived corruption generally reported higher happiness levels.
+- The regression model explained approximately 48% of the variation in happiness scores, suggesting that corruption perception is an important factor but not the only determinant of happiness.
+- A strength of this investigation is the use of data from multiple countries across several years.
+- A limitation is that other factors such as income, health, and social support may also influence happiness but were not included in the model.
+- Future investigations could examine multiple factors simultaneously using multiple regression analysis.
+
+
+
+# Conclusion
+
+- This investigation examined the relationship between corruption perception and happiness across countries.
+- Descriptive statistics and visualisations suggested a positive association between CPI score and happiness score.
+- Linear regression analysis found a statistically significant positive relationship between CPI score and happiness score (p < 0.001).
+- The model explained approximately 48% of the variation in happiness scores.
+- Overall, the findings suggest that countries with lower perceived corruption tend to report higher levels of happiness.
+
+
+
+# References
+
+- World Happiness Report. (2024). World Happiness Data.https://www.worldhappiness.report/
+- Transparency International. (2024). Corruption Perceptions Index (CPI).https://www.transparency.org
+- Kaggle. World Happiness and Corruption Dataset.https://www.kaggle.com
+- Wickham, H. et al. (2023). ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics.
+- Wickham, H. et al. (2023). dplyr: A Grammar of Data Manipulation.
