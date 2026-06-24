@@ -4,6 +4,10 @@
 
 This applied analytics project investigates the relationship between Corruption Perception Index (CPI) scores and happiness levels across countries using data from 2015–2020.
 
+## Visualization
+
+![Relationship Between CPI and Happiness](corruption_happiness_analysis.png)
+
 ## Research Question
 
 Is there a statistically significant relationship between CPI scores and happiness levels across countries?
